@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using TP24Entities;
+using TP24Entities.Repositories;
 using TP24LendingApi.CustomExceptionMiddleware;
 using TP24LendingApi.Services;
 
@@ -16,6 +17,9 @@ namespace TP24LendingApi
 
             builder.Services.AddControllers();
             builder.Services.AddScoped<ICurrencyConverterService, CurrencyConverterService>();
+            builder.Services.AddScoped<IReceivablesService, ReceivablesService>();
+            builder.Services.AddScoped<IReceivableRepository, ReceivableRepository>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddDbContext<ReceivablesContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("WebApiDatabase")));
             builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddApiVersioning(opt =>

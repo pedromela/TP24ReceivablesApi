@@ -14,42 +14,49 @@ namespace TP24LendingApiTests
         public ReceivablesControllerTests()
         {
             DbContextOptions<ReceivablesContext> dbContextOptions = new DbContextOptionsBuilder<ReceivablesContext>()
-            .UseInMemoryDatabase(databaseName: "TestDatabase")
-            .Options;
+                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .Options;
             _context = new ReceivablesContext(dbContextOptions);
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
         }
 
+        public ReceivablesController CreateController()
+        {
+            var unitOfWork = new UnitOfWork(_context);
+            var currencyConverterService = new CurrencyConverterService();
+            var receivablesService = new ReceivablesService(unitOfWork, currencyConverterService);
+            return new ReceivablesController(receivablesService, AutoMapperSingleton.Mapper);
+        }
+
         [Fact]
-        public async void StoreReceivables_NullData()
+        public void StoreReceivables_NullData()
         {
             // Arrange
-            var controller = new ReceivablesController(_context, new CurrencyConverterService(), AutoMapperSingleton.Mapper);
+            var controller = CreateController();
             // Act
-            var result = await controller.StoreReceivables(null) as ObjectResult;
+            var result = controller.StoreReceivables(null) as ObjectResult;
             // Assert
-            Assert.Equal("Data is null.", result.Value);
+            Assert.Equal("Data is null.", result?.Value);
         }
 
         [Fact]
         public void StoreReceivables_RequiredPropertiesException()
         {
             // Arrange
-            var controller = new ReceivablesController(_context, new CurrencyConverterService(), AutoMapperSingleton.Mapper);
+            var controller = CreateController();
             var receivables = new List<ReceivableForCreationDto> {
                 new ReceivableForCreationDto { Reference = "1", OpeningValue = 100, PaidValue = 50, ClosedDate = new DateTime(2023, 01, 01) }
             };
             // Act and Assert
-            var ex = Assert.ThrowsAsync<DbUpdateException>(async () => await controller.StoreReceivables(receivables));
-            Assert.Equal("Required properties '{'CurrencyCode', 'DebtorCountryCode', 'DebtorName', 'DebtorReference', 'DueDate', 'IssueDate'}' are missing for the instance of entity type 'Receivable'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the entity key value.", ex.Result.Message);
+            var ex = Assert.Throws<DbUpdateException>(() => controller.StoreReceivables(receivables));
+            Assert.Equal("Required properties '{'CurrencyCode', 'DebtorCountryCode', 'DebtorName', 'DebtorReference', 'DueDate', 'IssueDate'}' are missing for the instance of entity type 'Receivable'. Consider using 'DbContextOptionsBuilder.EnableSensitiveDataLogging' to see the entity key value.", ex.Message);
         }
 
         [Fact]
-        public async void StoreReceivables_StoresSuccessfuly()
+        public void StoreReceivables_StoresSuccessfuly()
         {
             // Arrange
-            var controller = new ReceivablesController(_context, new CurrencyConverterService(), AutoMapperSingleton.Mapper);
             var receivables = new List<ReceivableForCreationDto>
             {
                 new ReceivableForCreationDto
@@ -66,8 +73,9 @@ namespace TP24LendingApiTests
                     IssueDate = new DateTime(2023, 01, 01)
                 }
             };
+            var controller = CreateController();
             // Act
-            var result = await controller.StoreReceivables(receivables) as OkObjectResult;
+            var result = controller.StoreReceivables(receivables) as OkObjectResult;
             // Assert
             Assert.Equal(200, result?.StatusCode);
             Assert.Equal("Receivables data stored successfully.", result?.Value);
@@ -101,8 +109,7 @@ namespace TP24LendingApiTests
                 IssueDate = new DateTime(2023, 01, 01)
             });
             _context.SaveChanges();
-            
-            var controller = new ReceivablesController(_context, new CurrencyConverterService(), AutoMapperSingleton.Mapper);
+            var controller = CreateController();
 
             // Act
             var result = controller.GetSummaryStatistics() as ObjectResult;
@@ -172,7 +179,7 @@ namespace TP24LendingApiTests
                 IssueDate = new DateTime(2023, 01, 01)
             });
             _context.SaveChanges();
-            var controller = new ReceivablesController(_context, new CurrencyConverterService(), AutoMapperSingleton.Mapper);
+            var controller = CreateController();
 
             // Act
             var result = controller.GetDebtorSummary("Debtor1") as ObjectResult;
