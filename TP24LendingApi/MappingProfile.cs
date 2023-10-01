@@ -9,7 +9,6 @@ namespace TP24LendingApi
         public MappingProfile()
         {
             CreateMap<ReceivableForCreationDto, Receivable>();
-            //CreateMap<List<Receivable>, List<ReceivableForCreationDto>>();
         }
     }
 }
