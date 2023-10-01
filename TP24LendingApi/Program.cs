@@ -14,8 +14,9 @@ namespace TP24LendingApi
 
             builder.Services.AddControllers();
 
-            builder.Services.AddDbContext<ReceivablesContext>(options =>
-            options.UseSqlite(builder.Configuration.GetConnectionString("WebApiDatabase")));
+            builder.Services.AddDbContext<ReceivablesContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("WebApiDatabase")));
+            builder.Services.AddAutoMapper(typeof(Program));
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -33,8 +34,8 @@ namespace TP24LendingApi
             }
             else
             {
-                app.UseMiddleware<ExceptionMiddleware>();
             }
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
 

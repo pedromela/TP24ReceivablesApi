@@ -1,36 +1,34 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TP24Entities.Models
+namespace TP24LendingApi.Models
 {
-    public class Receivable
+    public class ReceivableForCreationDto
     {
-        [Key]
-        [Required]
+        [Required(ErrorMessage = "Reference is required")]
         public string? Reference { get; set; }
-        [Required]
+        [Required(ErrorMessage = "CurrencyCode is required")]
         public string? CurrencyCode { get; set; }
-        [Required]
+        [Required(ErrorMessage = "IssueDate is required")]
         public DateTime? IssueDate { get; set; }
-        [Required]
+        [Required(ErrorMessage = "OpeningValue is required")]
         public double OpeningValue { get; set; }
-        [Required]
+        [Required(ErrorMessage = "PaidValue is required")]
         public double PaidValue { get; set; }
-        [Required]
+        [Required(ErrorMessage = "DueDate is required")]
         public DateTime? DueDate { get; set; }
         public DateTime? ClosedDate { get; set; }
         public bool? Cancelled { get; set; }
-        [Required]
+        [Required(ErrorMessage = "DebtorName is required")]
         public string? DebtorName { get; set; }
-        [Required]
+        [Required(ErrorMessage = "DebtorReference is required")]
         public string? DebtorReference { get; set; }
         public string? DebtorAddress1 { get; set; }
         public string? DebtorAddress2 { get; set; }
         public string? DebtorTown { get; set; }
         public string? DebtorState { get; set; }
         public string? DebtorZip { get; set; }
-        [Required]
+        [Required(ErrorMessage = "DebtorCountryCode is required")]
         public string? DebtorCountryCode { get; set; }
         public string? DebtorRegistrationNumber { get; set; }
-
     }
 }

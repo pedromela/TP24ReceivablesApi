@@ -21,12 +21,23 @@ namespace TP24LendingApiTests
         }
 
         [Fact]
+        public async void StoreReceivables_NullData()
+        {
+            // Arrange
+            var controller = new ReceivablesController(_context, AutoMapperSingleton.Mapper);
+            // Act
+            var result = await controller.StoreReceivables(null) as ObjectResult;
+            // Assert
+            Assert.Equal("Data is null.", result.Value);
+        }
+
+        [Fact]
         public void StoreReceivables_RequiredPropertiesException()
         {
             // Arrange
-            var controller = new ReceivablesController(_context);
-            var receivables = new List<Receivable> {
-                new Receivable { Reference = "1", OpeningValue = 100, PaidValue = 50, ClosedDate = "2023-01-01" }
+            var controller = new ReceivablesController(_context, AutoMapperSingleton.Mapper);
+            var receivables = new List<ReceivableForCreationDto> {
+                new ReceivableForCreationDto { Reference = "1", OpeningValue = 100, PaidValue = 50, ClosedDate = new DateTime(2023, 01, 01) }
             };
             // Act and Assert
             var ex = Assert.ThrowsAsync<DbUpdateException>(async () => await controller.StoreReceivables(receivables));
@@ -37,27 +48,28 @@ namespace TP24LendingApiTests
         public async void StoreReceivables_StoresSuccessfuly()
         {
             // Arrange
-            var controller = new ReceivablesController(_context);
-            var receivables = new List<Receivable>
+            var controller = new ReceivablesController(_context, AutoMapperSingleton.Mapper);
+            var receivables = new List<ReceivableForCreationDto>
             {
-                new Receivable
+                new ReceivableForCreationDto
                 {
                     Reference = "1",
                     OpeningValue = 100,
                     PaidValue = 50,
-                    ClosedDate = "2023-06-01",
+                    ClosedDate = new DateTime(2023, 06, 01),
                     CurrencyCode = "EUR",
                     DebtorCountryCode = "PT",
                     DebtorName = "name",
                     DebtorReference = "1",
-                    DueDate = "2023-12-31",
-                    IssueDate = "2023-01-01"
+                    DueDate = new DateTime(2023, 12, 01),
+                    IssueDate = new DateTime(2023, 01, 01)
                 }
             };
             // Act
             var result = await controller.StoreReceivables(receivables) as OkObjectResult;
             // Assert
             Assert.Equal(200, result?.StatusCode);
+            Assert.Equal("Receivables data stored successfully.", result?.Value);
         }
 
         [Fact]
@@ -68,13 +80,13 @@ namespace TP24LendingApiTests
                 Reference = "1",
                 OpeningValue = 100,
                 PaidValue = 50,
-                ClosedDate = "2023-06-01",
+                ClosedDate = new DateTime(2023,6,1),
                 CurrencyCode = "EUR",
                 DebtorCountryCode = "PT",
                 DebtorName = "name",
                 DebtorReference = "Debtor1",
-                DueDate = "2023-12-31",
-                IssueDate = "2023-01-01"
+                DueDate = new DateTime(2023,12,31),
+                IssueDate = new DateTime(2023,01,01)
             });
             _context.Receivables.Add(new Receivable { 
                 Reference = "2", 
@@ -84,12 +96,12 @@ namespace TP24LendingApiTests
                 DebtorCountryCode = "PT",
                 DebtorName = "name",
                 DebtorReference = "Debtor1",
-                DueDate = "2023-12-31",
-                IssueDate = "2023-01-01"
+                DueDate = new DateTime(2023, 12, 31),
+                IssueDate = new DateTime(2023, 01, 01)
             });
             _context.SaveChanges();
             
-            var controller = new ReceivablesController(_context);
+            var controller = new ReceivablesController(_context, AutoMapperSingleton.Mapper);
 
             // Act
             var result = controller.GetSummaryStatistics() as ObjectResult;
@@ -118,20 +130,20 @@ namespace TP24LendingApiTests
                 CurrencyCode = "EUR",
                 DebtorCountryCode = "PT",
                 DebtorName = "name",
-                DueDate = "2023-12-31",
-                IssueDate = "2023-01-01"
+                DueDate = new DateTime(2023, 12, 31),
+                IssueDate = new DateTime(2023, 01, 01)
             });
             _context.Receivables.Add(new Receivable { 
                 Reference = "2", 
                 DebtorReference = "Debtor1",
                 OpeningValue = 100,
                 PaidValue = 50, 
-                ClosedDate = "2023-01-01",
+                ClosedDate = new DateTime(2023, 06, 01),
                 CurrencyCode = "EUR",
                 DebtorCountryCode = "PT",
                 DebtorName = "name",
-                DueDate = "2023-12-31",
-                IssueDate = "2023-01-01"
+                DueDate = new DateTime(2023, 12, 31),
+                IssueDate = new DateTime(2023, 01, 01)
             });
             _context.Receivables.Add(new Receivable { 
                 Reference = "3", 
@@ -141,8 +153,8 @@ namespace TP24LendingApiTests
                 CurrencyCode = "EUR",
                 DebtorCountryCode = "PT",
                 DebtorName = "name",
-                DueDate = "2023-12-31",
-                IssueDate = "2023-01-01"
+                DueDate = new DateTime(2023, 12, 31),
+                IssueDate = new DateTime(2023, 01, 01)
             });
 
             _context.Receivables.Add(new Receivable
@@ -155,11 +167,11 @@ namespace TP24LendingApiTests
                 CurrencyCode = "EUR",
                 DebtorCountryCode = "PT",
                 DebtorName = "name",
-                DueDate = "2023-12-31",
-                IssueDate = "2023-01-01"
+                DueDate = new DateTime(2023, 12, 31),
+                IssueDate = new DateTime(2023, 01, 01)
             });
             _context.SaveChanges();
-            var controller = new ReceivablesController(_context);
+            var controller = new ReceivablesController(_context, AutoMapperSingleton.Mapper);
 
             // Act
             var result = controller.GetDebtorSummary("Debtor1") as ObjectResult;

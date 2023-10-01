@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using TP24LendingApi.Models;
 using TP24Entities;
 using TP24Entities.Models;
+using AutoMapper;
 
 namespace TP24LendingApi.Controllers
 {
@@ -10,18 +11,27 @@ namespace TP24LendingApi.Controllers
     public class ReceivablesController : ControllerBase
     {
         private readonly ReceivablesContext _context;
+        private IMapper _mapper;
 
-        public ReceivablesController(ReceivablesContext context)
+        public ReceivablesController(ReceivablesContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> StoreReceivables(List<Receivable> data)
+        [HttpPost(Name = "StoreReceivables")]
+        public async Task<IActionResult> StoreReceivables(List<ReceivableForCreationDto> data)
         {
-            _context.Receivables.AddRange(data);
+            if (data is null)
+            {
+                return BadRequest("Data is null.");
+            }
+
+            var entitiyData = _mapper.Map<List<Receivable>>(data);
+
+            _context.Receivables.AddRange(entitiyData);
             await _context.SaveChangesAsync();
-            return Ok("Receivables data stored successfully");
+            return Ok("Receivables data stored successfully.");
         }
 
         [HttpGet("summary")]
