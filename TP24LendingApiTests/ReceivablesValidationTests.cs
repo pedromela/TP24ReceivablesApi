@@ -35,6 +35,62 @@ namespace TP24LendingApiTests
         }
 
         [Fact]
+        public void Receivables_OpeningValueShouldBeGraterThanZero()
+        {
+            // Arrange
+            var receivable = new ReceivableForCreationDto
+            {
+                Reference = "1",
+                OpeningValue = -100,
+                PaidValue = 50,
+                ClosedDate = new DateTime(2023, 06, 01),
+                CurrencyCode = "EUR",
+                DebtorCountryCode = "PT",
+                DebtorName = "name",
+                DebtorReference = "1",
+                DueDate = new DateTime(2023, 01, 02),
+                IssueDate = new DateTime(2023, 01, 01)
+            };
+            var validations = new Collection<ValidationResult>();
+
+            //Act
+            var isValid = Validator.TryValidateObject(receivable, new ValidationContext(receivable, null, null), validations, true);
+
+            //Assert
+            Assert.False(isValid);
+            Assert.Equal(1, validations?.Count);
+            Assert.Equal("Please enter a value bigger than 0 for OpeningValue.", validations?[0].ErrorMessage);
+        }
+
+        [Fact]
+        public void Receivables_PaidValueShouldBeGraterThanZero()
+        {
+            // Arrange
+            var receivable = new ReceivableForCreationDto
+            {
+                Reference = "1",
+                OpeningValue = 100,
+                PaidValue = -50,
+                ClosedDate = new DateTime(2023, 06, 01),
+                CurrencyCode = "EUR",
+                DebtorCountryCode = "PT",
+                DebtorName = "name",
+                DebtorReference = "1",
+                DueDate = new DateTime(2023, 01, 02),
+                IssueDate = new DateTime(2023, 01, 01)
+            };
+            var validations = new Collection<ValidationResult>();
+
+            //Act
+            var isValid = Validator.TryValidateObject(receivable, new ValidationContext(receivable, null, null), validations, true);
+
+            //Assert
+            Assert.False(isValid);
+            Assert.Equal(1, validations?.Count);
+            Assert.Equal("Please enter a value bigger than 0 for PaidValue.", validations?[0].ErrorMessage);
+        }
+
+        [Fact]
         public void Receivables_DueDateLesserThanIssueDate_Failure()
         {
             // Arrange
