@@ -27,11 +27,11 @@ namespace TP24LendingApi.Controllers
         [HttpGet("summary")]
         public IActionResult GetSummaryStatistics()
         {
-            decimal openInvoicesValue = _context.Receivables
+            double openInvoicesValue = _context.Receivables
                 .Where(r => r.ClosedDate == null)
                 .Sum(r => r.OpeningValue);
 
-            decimal closedInvoicesValue = _context.Receivables
+            double closedInvoicesValue = _context.Receivables
                 .Where(r => r.ClosedDate != null)
                 .Sum(r => r.PaidValue);
 
@@ -47,11 +47,11 @@ namespace TP24LendingApi.Controllers
         [HttpGet("summary/{debtorReference}")]
         public IActionResult GetDebtorSummary(string debtorReference)
         {
-            decimal openInvoicesValue = _context.Receivables
+            double openInvoicesValue = _context.Receivables
                 .Where(r => r.DebtorReference == debtorReference && r.ClosedDate == null)
                 .Sum(r => r.OpeningValue);
 
-            decimal closedInvoicesValue = _context.Receivables
+            double closedInvoicesValue = _context.Receivables
                 .Where(r => r.DebtorReference == debtorReference && r.ClosedDate != null)
                 .Sum(r => r.PaidValue);
 

@@ -95,8 +95,8 @@ namespace TP24LendingApiTests
             var summary = result.Value as dynamic;
 
             // Assert
-            Assert.Equal(200M, summary.OpenInvoicesValue);
-            Assert.Equal(50M, summary.ClosedInvoicesValue);
+            Assert.Equal(200, summary.OpenInvoicesValue);
+            Assert.Equal(50, summary.ClosedInvoicesValue);
         }
 
         [Fact]
@@ -145,8 +145,8 @@ namespace TP24LendingApiTests
             var summary = result.Value as dynamic;
 
             // Assert
-            Assert.Equal(100M, summary.OpenInvoicesValue);
-            Assert.Equal(50M, summary.ClosedInvoicesValue);
+            Assert.Equal(100, summary.OpenInvoicesValue);
+            Assert.Equal(50, summary.ClosedInvoicesValue);
         }
     }
 }

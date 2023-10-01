@@ -8,8 +8,8 @@ namespace TP24Entities.Models
         public string Reference { get; set; }
         public string CurrencyCode { get; set; }
         public string IssueDate { get; set; }
-        public decimal OpeningValue { get; set; }
-        public decimal PaidValue { get; set; }
+        public double OpeningValue { get; set; }
+        public double PaidValue { get; set; }
         public string DueDate { get; set; }
         public string? ClosedDate { get; set; }
         public bool? Cancelled { get; set; }

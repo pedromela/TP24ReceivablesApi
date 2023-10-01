@@ -2,7 +2,7 @@
 {
     public class Summary
     {
-        public decimal OpenInvoicesValue { get; set; }
-        public decimal ClosedInvoicesValue { get; set; }
+        public double OpenInvoicesValue { get; set; }
+        public double ClosedInvoicesValue { get; set; }
     }
 }
