@@ -48,5 +48,7 @@ however the format of the payload should not differ from the example below.
 ]
 
 # Assumptions
-I assumed that only receivables with a valid closed date will be accounted for the closed statistics and only receivables without a closed date will be accounted for the open statistics.
-I thought about using the repository pattern but ended up not doing It to avoid adding too much boilerplate code.
+I assumed that only receivables with a valid closing date will be counted towards the closed statistics and only receivables without a closing date will be counted towards the open statistics.
+I thought about using the repository pattern, but ended up not doing so to avoid adding too much boilerplate code.
+For the database model, I considered the receivables reference field as the primary key.
+Monetary values ​​returned in statistical endpoints are always converted to USD. I created a CurrencyConverterService, but to simplify the GetRate() function it always returns a static rate = 1.
