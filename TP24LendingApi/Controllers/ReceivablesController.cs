@@ -27,18 +27,31 @@ namespace TP24LendingApi.Controllers
         [HttpGet("summary")]
         public IActionResult GetSummaryStatistics()
         {
-            double openInvoicesValue = _context.Receivables
-                .Where(r => r.ClosedDate == null)
-                .Sum(r => r.OpeningValue);
+            var openReceivables = _context.Receivables
+                .Where(r => r.ClosedDate == null);
+            double openReceivablesOpeningValue = openReceivables.Sum(r => r.OpeningValue);
+            double openReceivablesPaidValue = openReceivables.Sum(r => r.PaidValue);
 
-            double closedInvoicesValue = _context.Receivables
-                .Where(r => r.ClosedDate != null)
-                .Sum(r => r.PaidValue);
+            var closedReceivables = _context.Receivables
+                .Where(r => r.ClosedDate != null);
+            double closedReceivablesOpeningValue = closedReceivables.Sum(r => r.OpeningValue);
+            double closedReceivablesPaidValue = closedReceivables.Sum(r => r.PaidValue);
+
+            var cancelledReceivables = _context.Receivables
+                .Where(r => r.Cancelled == true);
+            double cancelledReceivablesOpeningValue = cancelledReceivables.Sum(r => r.OpeningValue);
+            double cancelledReceivablesPaidValue = cancelledReceivables.Sum(r => r.PaidValue);
 
             var summary = new Summary
             {
-                OpenInvoicesValue = openInvoicesValue,
-                ClosedInvoicesValue = closedInvoicesValue
+                ReceivablesOpeningValue = openReceivablesOpeningValue + closedReceivablesOpeningValue,
+                ReceivablesPaidValue = openReceivablesPaidValue + closedReceivablesPaidValue,
+                OpenReceivablesOpeningValue = openReceivablesOpeningValue,
+                OpenReceivablesPaidValue = openReceivablesPaidValue,
+                ClosedReceivablesOpeningValue = closedReceivablesOpeningValue,
+                ClosedReceivablesPaidValue = closedReceivablesPaidValue,
+                CancelledReceivablesOpeningValue = cancelledReceivablesOpeningValue,
+                CancelledReceivablesPaidValue = cancelledReceivablesPaidValue,
             };
 
             return Ok(summary);
@@ -47,18 +60,31 @@ namespace TP24LendingApi.Controllers
         [HttpGet("summary/{debtorReference}")]
         public IActionResult GetDebtorSummary(string debtorReference)
         {
-            double openInvoicesValue = _context.Receivables
-                .Where(r => r.DebtorReference == debtorReference && r.ClosedDate == null)
-                .Sum(r => r.OpeningValue);
+            var openReceivables = _context.Receivables
+                .Where(r => r.DebtorReference == debtorReference && r.ClosedDate == null);
+            double openReceivablesOpeningValue = openReceivables.Sum(r => r.OpeningValue);
+            double openReceivablesPaidValue = openReceivables.Sum(r => r.PaidValue);
 
-            double closedInvoicesValue = _context.Receivables
-                .Where(r => r.DebtorReference == debtorReference && r.ClosedDate != null)
-                .Sum(r => r.PaidValue);
+            var closedReceivables = _context.Receivables
+                .Where(r => r.DebtorReference == debtorReference && r.ClosedDate != null);
+            double closedReceivablesOpeningValue = closedReceivables.Sum(r => r.OpeningValue);
+            double closedReceivablesPaidValue = closedReceivables.Sum(r => r.PaidValue);
+
+            var cancelledReceivables = _context.Receivables
+                .Where(r => r.DebtorReference == debtorReference && r.Cancelled == true);
+            double cancelledReceivablesOpeningValue = cancelledReceivables.Sum(r => r.OpeningValue);
+            double cancelledReceivablesPaidValue = cancelledReceivables.Sum(r => r.PaidValue);
 
             var summary = new Summary
             {
-                OpenInvoicesValue = openInvoicesValue,
-                ClosedInvoicesValue = closedInvoicesValue
+                ReceivablesOpeningValue = openReceivablesOpeningValue + closedReceivablesOpeningValue,
+                ReceivablesPaidValue = openReceivablesPaidValue + closedReceivablesPaidValue,
+                OpenReceivablesOpeningValue = openReceivablesOpeningValue,
+                OpenReceivablesPaidValue = openReceivablesPaidValue,
+                ClosedReceivablesOpeningValue = closedReceivablesOpeningValue,
+                ClosedReceivablesPaidValue = closedReceivablesPaidValue,
+                CancelledReceivablesOpeningValue = cancelledReceivablesOpeningValue,
+                CancelledReceivablesPaidValue = cancelledReceivablesPaidValue,
             };
 
             return Ok(summary);

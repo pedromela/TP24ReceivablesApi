@@ -3,6 +3,7 @@ using TP24Entities;
 using TP24Entities.Models;
 using TP24LendingApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using TP24LendingApi.Models;
 
 namespace TP24LendingApiTests
 {
@@ -92,11 +93,17 @@ namespace TP24LendingApiTests
 
             // Act
             var result = controller.GetSummaryStatistics() as ObjectResult;
-            var summary = result.Value as dynamic;
+            var summary = result?.Value as Summary;
 
             // Assert
-            Assert.Equal(200, summary.OpenInvoicesValue);
-            Assert.Equal(50, summary.ClosedInvoicesValue);
+            Assert.Equal(300, summary?.ReceivablesOpeningValue);
+            Assert.Equal(200, summary?.ReceivablesPaidValue);
+            Assert.Equal(200, summary?.OpenReceivablesOpeningValue);
+            Assert.Equal(150, summary?.OpenReceivablesPaidValue);
+            Assert.Equal(100, summary?.ClosedReceivablesOpeningValue);
+            Assert.Equal(50, summary?.ClosedReceivablesPaidValue);
+            Assert.Equal(0, summary?.CancelledReceivablesOpeningValue);
+            Assert.Equal(0, summary?.CancelledReceivablesPaidValue);
         }
 
         [Fact]
@@ -137,16 +144,48 @@ namespace TP24LendingApiTests
                 DueDate = "2023-12-31",
                 IssueDate = "2023-01-01"
             });
+
+            _context.Receivables.Add(new Receivable
+            {
+                Reference = "4",
+                DebtorReference = "Debtor2",
+                OpeningValue = 200,
+                PaidValue = 150,
+                Cancelled = true,
+                CurrencyCode = "EUR",
+                DebtorCountryCode = "PT",
+                DebtorName = "name",
+                DueDate = "2023-12-31",
+                IssueDate = "2023-01-01"
+            });
             _context.SaveChanges();
             var controller = new ReceivablesController(_context);
 
             // Act
             var result = controller.GetDebtorSummary("Debtor1") as ObjectResult;
-            var summary = result.Value as dynamic;
+            var summary = result?.Value as Summary;
+
+            var result2 = controller.GetDebtorSummary("Debtor2") as ObjectResult;
+            var summary2 = result2?.Value as Summary;
 
             // Assert
-            Assert.Equal(100, summary.OpenInvoicesValue);
-            Assert.Equal(50, summary.ClosedInvoicesValue);
+            Assert.Equal(200, summary?.ReceivablesOpeningValue);
+            Assert.Equal(150, summary?.ReceivablesPaidValue);
+            Assert.Equal(100, summary?.OpenReceivablesOpeningValue);
+            Assert.Equal(100, summary?.OpenReceivablesPaidValue);
+            Assert.Equal(100, summary?.ClosedReceivablesOpeningValue);
+            Assert.Equal(50, summary?.ClosedReceivablesPaidValue);
+            Assert.Equal(0, summary?.CancelledReceivablesOpeningValue);
+            Assert.Equal(0, summary?.CancelledReceivablesPaidValue);
+
+            Assert.Equal(400, summary2?.ReceivablesOpeningValue);
+            Assert.Equal(300, summary2?.ReceivablesPaidValue);
+            Assert.Equal(400, summary2?.OpenReceivablesOpeningValue);
+            Assert.Equal(300, summary2?.OpenReceivablesPaidValue);
+            Assert.Equal(0, summary2?.ClosedReceivablesOpeningValue);
+            Assert.Equal(0, summary2?.ClosedReceivablesPaidValue);
+            Assert.Equal(200, summary2?.CancelledReceivablesOpeningValue);
+            Assert.Equal(150, summary2?.CancelledReceivablesPaidValue);
         }
     }
 }
