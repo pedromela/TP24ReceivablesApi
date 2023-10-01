@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Globalization;
+using TP24LendingApi.Services;
 
 namespace TP24LendingApi.CustomValidations
 {
@@ -26,22 +26,7 @@ namespace TP24LendingApi.CustomValidations
 
         public bool IsValidCurrencyCode(string ISOCurrencySymbol)
         {
-            var codes = CultureInfo
-                .GetCultures(CultureTypes.AllCultures)
-                .Where(c => !c.IsNeutralCulture)
-                .Select(culture =>
-                {
-                    try
-                    {
-                        return new RegionInfo(culture.Name);
-                    }
-                    catch
-                    {
-                        return null;
-                    }
-                })
-                .Any(ri => ri != null && ri.ISOCurrencySymbol == ISOCurrencySymbol);
-
+            var codes = CurrencyConverterService.GetAllCurrencyCodes().Any(ri => ri == ISOCurrencySymbol);
             return codes;
         }
     }

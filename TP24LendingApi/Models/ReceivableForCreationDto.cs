@@ -13,8 +13,10 @@ namespace TP24LendingApi.Models
         [Required(ErrorMessage = "IssueDate is required.")]
         public DateTime? IssueDate { get; set; }
         [Required(ErrorMessage = "OpeningValue is required.")]
+        [Range(0, double.MaxValue, ErrorMessage = "Please enter a value bigger than {1} for OpeningValue.")]
         public double OpeningValue { get; set; }
         [Required(ErrorMessage = "PaidValue is required.")]
+        [Range(0, double.MaxValue, ErrorMessage = "Please enter a value bigger than {1} for PaidValue.")]
         public double PaidValue { get; set; }
         [Required(ErrorMessage = "DueDate is required.")]
         [DateGreaterThan(DateToCompareToFieldName = "IssueDate")]

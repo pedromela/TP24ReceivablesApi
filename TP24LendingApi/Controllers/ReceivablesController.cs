@@ -3,19 +3,23 @@ using TP24LendingApi.Models;
 using TP24Entities;
 using TP24Entities.Models;
 using AutoMapper;
+using TP24LendingApi.Services;
 
 namespace TP24LendingApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [ApiVersion("1.0")]
     public class ReceivablesController : ControllerBase
     {
         private readonly ReceivablesContext _context;
+        private ICurrencyConverterService _converterService;
         private IMapper _mapper;
 
-        public ReceivablesController(ReceivablesContext context, IMapper mapper)
+        public ReceivablesController(ReceivablesContext context, ICurrencyConverterService converterService, IMapper mapper)
         {
             _context = context;
+            _converterService = converterService;
             _mapper = mapper;
         }
 
@@ -39,18 +43,18 @@ namespace TP24LendingApi.Controllers
         {
             var openReceivables = _context.Receivables
                 .Where(r => r.ClosedDate == null);
-            double openReceivablesOpeningValue = openReceivables.Sum(r => r.OpeningValue);
-            double openReceivablesPaidValue = openReceivables.Sum(r => r.PaidValue);
+            double openReceivablesOpeningValue = openReceivables.Select(r => _converterService.Convert(r.OpeningValue, r.CurrencyCode, "USD")).Sum();
+            double openReceivablesPaidValue = openReceivables.Select(r => _converterService.Convert(r.PaidValue, r.CurrencyCode, "USD")).Sum();
 
             var closedReceivables = _context.Receivables
                 .Where(r => r.ClosedDate != null);
-            double closedReceivablesOpeningValue = closedReceivables.Sum(r => r.OpeningValue);
-            double closedReceivablesPaidValue = closedReceivables.Sum(r => r.PaidValue);
+            double closedReceivablesOpeningValue = closedReceivables.Select(r => _converterService.Convert(r.OpeningValue, r.CurrencyCode, "USD")).Sum();
+            double closedReceivablesPaidValue = closedReceivables.Select(r => _converterService.Convert(r.PaidValue, r.CurrencyCode, "USD")).Sum();
 
             var cancelledReceivables = _context.Receivables
                 .Where(r => r.Cancelled == true);
-            double cancelledReceivablesOpeningValue = cancelledReceivables.Sum(r => r.OpeningValue);
-            double cancelledReceivablesPaidValue = cancelledReceivables.Sum(r => r.PaidValue);
+            double cancelledReceivablesOpeningValue = cancelledReceivables.Select(r => _converterService.Convert(r.OpeningValue, r.CurrencyCode, "USD")).Sum();
+            double cancelledReceivablesPaidValue = cancelledReceivables.Select(r => _converterService.Convert(r.PaidValue, r.CurrencyCode, "USD")).Sum();
 
             var summary = new Summary
             {
@@ -72,18 +76,18 @@ namespace TP24LendingApi.Controllers
         {
             var openReceivables = _context.Receivables
                 .Where(r => r.DebtorReference == debtorReference && r.ClosedDate == null);
-            double openReceivablesOpeningValue = openReceivables.Sum(r => r.OpeningValue);
-            double openReceivablesPaidValue = openReceivables.Sum(r => r.PaidValue);
+            double openReceivablesOpeningValue = openReceivables.Select(r => _converterService.Convert(r.OpeningValue, r.CurrencyCode, "USD")).Sum();
+            double openReceivablesPaidValue = openReceivables.Select(r => _converterService.Convert(r.PaidValue, r.CurrencyCode, "USD")).Sum();
 
             var closedReceivables = _context.Receivables
                 .Where(r => r.DebtorReference == debtorReference && r.ClosedDate != null);
-            double closedReceivablesOpeningValue = closedReceivables.Sum(r => r.OpeningValue);
-            double closedReceivablesPaidValue = closedReceivables.Sum(r => r.PaidValue);
+            double closedReceivablesOpeningValue = closedReceivables.Select(r => _converterService.Convert(r.OpeningValue, r.CurrencyCode, "USD")).Sum();
+            double closedReceivablesPaidValue = closedReceivables.Select(r => _converterService.Convert(r.PaidValue, r.CurrencyCode, "USD")).Sum();
 
             var cancelledReceivables = _context.Receivables
                 .Where(r => r.DebtorReference == debtorReference && r.Cancelled == true);
-            double cancelledReceivablesOpeningValue = cancelledReceivables.Sum(r => r.OpeningValue);
-            double cancelledReceivablesPaidValue = cancelledReceivables.Sum(r => r.PaidValue);
+            double cancelledReceivablesOpeningValue = cancelledReceivables.Select(r => _converterService.Convert(r.OpeningValue, r.CurrencyCode, "USD")).Sum();
+            double cancelledReceivablesPaidValue = cancelledReceivables.Select(r => _converterService.Convert(r.PaidValue, r.CurrencyCode, "USD")).Sum();
 
             var summary = new Summary
             {

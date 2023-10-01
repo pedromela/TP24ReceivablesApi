@@ -4,6 +4,7 @@ using TP24Entities.Models;
 using TP24LendingApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using TP24LendingApi.Models;
+using TP24LendingApi.Services;
 
 namespace TP24LendingApiTests
 {
@@ -24,7 +25,7 @@ namespace TP24LendingApiTests
         public async void StoreReceivables_NullData()
         {
             // Arrange
-            var controller = new ReceivablesController(_context, AutoMapperSingleton.Mapper);
+            var controller = new ReceivablesController(_context, new CurrencyConverterService(), AutoMapperSingleton.Mapper);
             // Act
             var result = await controller.StoreReceivables(null) as ObjectResult;
             // Assert
@@ -35,7 +36,7 @@ namespace TP24LendingApiTests
         public void StoreReceivables_RequiredPropertiesException()
         {
             // Arrange
-            var controller = new ReceivablesController(_context, AutoMapperSingleton.Mapper);
+            var controller = new ReceivablesController(_context, new CurrencyConverterService(), AutoMapperSingleton.Mapper);
             var receivables = new List<ReceivableForCreationDto> {
                 new ReceivableForCreationDto { Reference = "1", OpeningValue = 100, PaidValue = 50, ClosedDate = new DateTime(2023, 01, 01) }
             };
@@ -48,7 +49,7 @@ namespace TP24LendingApiTests
         public async void StoreReceivables_StoresSuccessfuly()
         {
             // Arrange
-            var controller = new ReceivablesController(_context, AutoMapperSingleton.Mapper);
+            var controller = new ReceivablesController(_context, new CurrencyConverterService(), AutoMapperSingleton.Mapper);
             var receivables = new List<ReceivableForCreationDto>
             {
                 new ReceivableForCreationDto
@@ -101,7 +102,7 @@ namespace TP24LendingApiTests
             });
             _context.SaveChanges();
             
-            var controller = new ReceivablesController(_context, AutoMapperSingleton.Mapper);
+            var controller = new ReceivablesController(_context, new CurrencyConverterService(), AutoMapperSingleton.Mapper);
 
             // Act
             var result = controller.GetSummaryStatistics() as ObjectResult;
@@ -171,7 +172,7 @@ namespace TP24LendingApiTests
                 IssueDate = new DateTime(2023, 01, 01)
             });
             _context.SaveChanges();
-            var controller = new ReceivablesController(_context, AutoMapperSingleton.Mapper);
+            var controller = new ReceivablesController(_context, new CurrencyConverterService(), AutoMapperSingleton.Mapper);
 
             // Act
             var result = controller.GetDebtorSummary("Debtor1") as ObjectResult;
