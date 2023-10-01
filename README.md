@@ -13,6 +13,7 @@ Write a basic set of HTTP APIs which follows best practices to provide the follo
 ● Accept a payload containing receivables data (see example payload below) and store it
 ● Return summary statistics about the stored receivables data; specifically the value of
 open and closed invoices
+
 The test is open ended and candidates should make and document assumptions about their
 solution. Candidates are free to interpret the data and apply business logic as they see fit,
 however the format of the payload should not differ from the example below.
@@ -45,3 +46,6 @@ however the format of the payload should not differ from the example below.
 "debtorRegistrationNumber": "string" //optional
 }
 ]
+
+# Assumptions
+I assumed that only receivables with a valid closed date will be accounted for the closed statistics and only receivables without a closed date will be accounter for the open statistics.
