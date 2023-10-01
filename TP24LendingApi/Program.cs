@@ -32,9 +32,7 @@ namespace TP24LendingApi
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            else
-            {
-            }
+
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();

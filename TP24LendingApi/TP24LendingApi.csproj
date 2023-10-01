@@ -15,8 +15,4 @@
     <ProjectReference Include="..\TP24Persistence\TP24Entities.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CustomValidations\" />
-  </ItemGroup>
-
 </Project>
