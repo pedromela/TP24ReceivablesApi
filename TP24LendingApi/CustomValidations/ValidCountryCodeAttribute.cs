@@ -20,7 +20,7 @@ namespace TP24LendingApi.CustomValidations
             }
             else
             {
-                return new ValidationResult(String.Format("Currency: {0} is not a valid country code.", value));
+                return new ValidationResult(String.Format("Country: {0} is not a valid country code.", value));
             }
         }
 

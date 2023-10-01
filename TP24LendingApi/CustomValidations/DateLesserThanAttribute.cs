@@ -25,7 +25,7 @@ namespace TP24LendingApi.CustomValidations
             }
             else
             {
-                return new ValidationResult(String.Format("Date: {0} must be lesser than {1}", validationContext.MemberName, DateToCompareToFieldName));
+                return new ValidationResult(String.Format("Date: {0} must be lesser than {1}.", validationContext.MemberName, DateToCompareToFieldName));
             }
         }
     }
